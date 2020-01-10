@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-stylesheet /css/Styles.css?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.ChatController">
+    <stylesheets><URL value="@/css/styles.css" /> </stylesheets>
+
+
+    <!-- Чат -->
+    <ScrollPane fx:id="chat_scroll" hbarPolicy="NEVER" hmax="0.0" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+        <VBox fx:id="chat_container">
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- Ввод сообщений -->
+    <HBox styleClass="mi-container, height1, shadow-xs" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="0.0">
+         <TextField fx:id="message_input" maxHeight="-Infinity" minHeight="-Infinity" onAction="#sendMessage" promptText="Введите сообщение..." HBox.hgrow="ALWAYS" />
+         <Button onAction="#sendMessage" styleClass="image-sm" />
+     </HBox>
+
+
+    <!-- Список друзей -->
+    <ListView fx:id="fl_container" maxWidth="-Infinity" minWidth="-Infinity" styleClass="shadow-xs" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
+    </ListView>
+
+    <!-- Меню -->
+    <HBox styleClass="main-menu, height1, shadow-xs" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <Pane HBox.hgrow="ALWAYS" />
+        <Button onAction="#tryLogin" styleClass="image-sm, login-btn" />
+    </HBox>
+
+    <!-- Окно входа -->
+    <BorderPane fx:id="login_container" style="-fx-background-color: #ffffff99;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    </BorderPane>
+
+</AnchorPane>

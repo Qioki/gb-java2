@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?scenebuilder-stylesheet /css/Styles.css?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/10.0.2-internal" >
+    <stylesheets><URL value="@/css/styles.css" /> </stylesheets>
+
+    <VBox styleClass="message-body">
+
+        <Text styleClass="message-from" />
+
+        <Text styleClass="message-text" />
+
+    </VBox>
+
+</AnchorPane>

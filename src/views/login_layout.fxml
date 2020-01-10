@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?scenebuilder-stylesheet /css/Styles.css?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" styleClass="login-form, shadow-md"
+      xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="main.LoginController">
+    <stylesheets><URL value="@/css/styles.css" /></stylesheets>
+
+
+    <Label styleClass="login-header, shadow-sm, green-element" text="Вход" />
+
+    <ImageView fitHeight="90.0" fitWidth="90.0" styleClass="profile-img" />
+
+    <VBox spacing="10.0">
+        <TextField fx:id="login_name" promptText="Имя пользователя" styleClass="login-input, height1, input-text"/>
+        <TextField fx:id="login_password" promptText="Пароль" styleClass="login-input, height1, input-text"/>
+    </VBox>
+
+    <VBox spacing="4.0">
+        <Button mnemonicParsing="false" onAction="#login" styleClass="login-button, height1, green-element, shadow-md"
+                text="Войти" textAlignment="CENTER"/>
+        <Label fx:id="login_alert" style="-fx-font-size: 10; -fx-text-fill: #d11;"/>
+
+    </VBox>
+
+</VBox>

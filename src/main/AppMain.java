@@ -20,11 +20,11 @@ public class AppMain {
 
         System.out.println("Один поток:");
 
-        longProcess(arr);
+        longProcess(arr, 0);
 
         long processTime = System.currentTimeMillis() - a;
 
-        System.out.println("Затраченное  время: " + processTime + " ms\n");
+        System.out.println("Затраченное время: " + processTime + " ms\n");
     }
 
     public static void run2() {
@@ -50,8 +50,8 @@ public class AppMain {
 
 
         // Запуск потоков
-        Thread t1 = new Thread(() -> longProcess(a1));
-        Thread t2 = new Thread(() -> longProcess(a2));
+        Thread t1 = new Thread(() -> longProcess(a1, 0));
+        Thread t2 = new Thread(() -> longProcess(a2, h));
         t1.start();
         t2.start();
 
@@ -72,14 +72,14 @@ public class AppMain {
         step3 = System.currentTimeMillis() - a;
         resultText += "\nВремя склеивания массивов: " + (step3 - step2) + " ms";
 
-        resultText = "Затраченное  время: " + step3 + " ms" + resultText;
+        resultText = "Затраченное время: " + step3 + " ms" + resultText;
 
         System.out.println(resultText);
     }
 
-    private static void longProcess(float[] arr){
+    private static void longProcess(float[] arr, int start){
         for (int i = 0; i < arr.length; i++)
-            arr[i] = (float)(arr[i] * Math.sin(0.2f + i / 5f) * Math.cos(0.2f + i / 5f) * Math.cos(0.4f + i / 2f));
+            arr[i] = (float)(arr[i] * Math.sin(0.2f + (start + i) / 5f) * Math.cos(0.2f + (start + i) / 5f) * Math.cos(0.4f + (start + i) / 2f));
     }
 
     private static float[] prepareArray() {

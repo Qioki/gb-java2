@@ -26,7 +26,7 @@ public class ConsoleChat implements Closeable {
             this.scanner = new Scanner(System.in);
 
 
-            new Thread(() -> {
+            Thread t1 = new Thread(() -> {
                 try {
                     while (true) {
                         String str = in.readUTF();
@@ -44,13 +44,12 @@ public class ConsoleChat implements Closeable {
                         e.printStackTrace();
                     }
                 }
-                System.exit(0); // К сожалению не хватило времени разобраться со Scanner. Как прервать nextLine я так и не понял.
-
-            }).start();
-
+            });
+            t1.start();
 
 
-            new Thread(() -> {
+
+            Thread t2 = new Thread(() -> {
                 try {
                     while (true) {
                         String str = scanner.nextLine();
@@ -69,7 +68,10 @@ public class ConsoleChat implements Closeable {
                         //e.printStackTrace();
                     }
                 }
-            }).start();
+            });
+
+            t2.setDaemon(true);
+            t2.start();
 
 
         } catch (IOException e) {

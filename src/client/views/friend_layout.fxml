@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import java.net.*?>
+<?scenebuilder-stylesheet /css/Styles.css?>
+
+<HBox styleClass="friend-container" xmlns="http://javafx.com/javafx/10.0.2-internal">
+    <stylesheets><URL value="@/client/views/styles.css" /> </stylesheets>
+
+    <ImageView fitHeight="30.0" fitWidth="30.0" styleClass="friend-avatar" />
+    <Text styleClass="friend-name" />
+
+</HBox>

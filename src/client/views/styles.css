@@ -1,0 +1,172 @@
+* {
+    green1: #edfff2;
+    green2: #c0f0b1;
+    green3: #5effa1;
+    green4: #4a8a60;
+    green5: #29693d;
+
+    green5-vgr: linear-gradient(from 47% 0% to 50% 100%, green4, green5);
+    green5-hgr: linear-gradient(from 0% 0% to 100% 100%, green4, green5);
+
+
+    red1: #dc143c;
+
+    grey1: #e5e5e5;
+    grey2: #ccc;
+    grey5: #888;
+
+    shadow-md: dropshadow(three-pass-box, #333a, 10, 0, 1, 2);
+    shadow-sm: dropshadow(three-pass-box, #333a, 3, 0, 1, 1);
+    shadow-xs: dropshadow(three-pass-box, #333a, 5, 0, 0, 0);
+
+
+    height-1: 40;
+    friend-list-width: 150;
+}
+
+
+/*   Chat styles   */
+.main-menu {
+    -fx-background-color: grey1;
+    -fx-alignment: "CENTER";
+    -fx-spacing: 7;
+}
+.main-menu .login-btn {
+    -fx-background-image: url("../img/login.png");
+    -fx-background-size: 30 30;
+    -fx-opacity: 0.65;
+}
+#chat_scroll {
+    -fx-background-color: green1;
+}
+#chat_container {
+    -fx-padding: 20;
+    -fx-spacing: 20;
+}
+#fl_container {    /* friend list */
+    -fx-background-color: white;
+    -fx-pref-width: friend-list-width;
+    -fx-padding: 20 1;
+}
+
+.friend-container {
+    -fx-alignment: "CENTER_LEFT";
+    -fx-spacing: 7;
+
+}
+.mi-container {    /* message input */
+    -fx-background-color: white;
+    -fx-alignment: "CENTER_LEFT";
+}
+#message_input {
+    -fx-pref-height: height-1;
+    -fx-background-color: transparent;
+}
+.mi-container .button {
+    -fx-background-image: url("../img/send.png");
+    -fx-background-size: 30 25;
+}
+/*   -----------   */
+
+
+
+/*   Message styles   */
+.message-body {
+    -fx-background-color: green3;
+    -fx-background-radius: 10;
+    -fx-padding: 10;
+    -fx-spacing: 5;
+    -fx-max-width: 0;
+    -fx-pref-width: 0;
+}
+.message-from {
+    -fx-prompt-text-fill: grey5;
+    -fx-font-size: 10px;
+
+}
+
+/*   -----------   */
+
+
+
+/*   Login styles    */
+.login-form {
+    -fx-background-color: grey1;
+    -fx-padding: 0 30 20 30;
+    -fx-pref-width: 250;
+    -fx-pref-height: 370;
+    -fx-spacing: 35;
+    -fx-alignment: "TOP_CENTER";
+    -fx-background-radius: 5;
+    -fx-background-insets: 0 ;
+}
+.login-header {
+    -fx-alignment: "CENTER";
+    -fx-font-size: 16pt;
+    -fx-opacity: 1;
+    -fx-translate-y: -10.0;
+    -fx-min-width: 130;
+    -fx-min-height: height-1;
+    -fx-background-radius: 3;
+}
+.profile-img {
+    -fx-opacity: 0.35;
+    -fx-image: url("../img/profile.png");
+}
+.login-input {
+    -fx-font-size: 11pt;
+}
+.login-button {
+    -fx-max-width: Infinity;
+    -fx-font-size: 12pt;
+    -fx-background-color: grey1;
+}
+
+
+/*   ------------    */
+
+
+
+
+
+.input-text {
+    -fx-prompt-text-fill: grey5;
+    -fx-border-color: grey5;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-radius: 0;
+    -fx-background-insets: 0;
+    -fx-background-color: transparent;
+}
+.input-text:focused {
+    -fx-border-color: green5-hgr;
+}
+
+.green-element {
+    -fx-background-color: green5-vgr;
+    -fx-text-fill: #eee;
+}
+
+
+.image-sm {
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-color: transparent;
+    -fx-min-height: height-1;
+    -fx-min-width: height-1;
+}
+
+.shadow-md {
+    -fx-effect: shadow-md;
+}
+.shadow-sm {
+    -fx-effect: shadow-sm;
+}
+.shadow-xs {
+    -fx-effect: shadow-xs;
+}
+
+.height1 {
+    -fx-max-height: height-1;
+    -fx-pref-height: height-1;
+    -fx-min-height: height-1;
+ }

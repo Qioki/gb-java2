@@ -45,7 +45,13 @@ public class Main extends Application {
         }
     }
     public void sendMsg(String toUser, String msg) {
-        sendToServer(Msg._msginfo + userLogin + " " + toUser + "," + msg);
+        if(msg.startsWith(Msg._blacklist)) {
+            String[] queryInfo = msg.split(" ", 2);
+            if(queryInfo.length > 1)
+                sendToServer(Msg._query + Msg._blacklist + " " + userLogin + " " + queryInfo[1]);
+        }
+        else
+            sendToServer(Msg._msginfo + userLogin + " " + toUser + " " + msg);
     }
     public void logOut() {
         isAuthorized = false;
@@ -55,7 +61,7 @@ public class Main extends Application {
         if (socket == null || socket.isClosed()) {
             connect();
         }
-        sendToServer(Msg._query + Msg._auth + userName + " " + password);
+        sendToServer(Msg._query + Msg._auth + " " + userName + " " + password);
     }
     public void connect() {
 
@@ -70,24 +76,34 @@ public class Main extends Application {
                         String str = in.readUTF();
                         System.out.println(str);
 
-                        if (str.startsWith(Msg._query + Msg._authok)) {
-                            isAuthorized = true;
-                            String[] userData = str.substring(str.indexOf(",") + 1).split(" ");
-                            userLogin = userData[0]; // str.substring(Msg._authok.length());
-                            chatController.setAuthorized(userLogin);
-                            out.writeUTF(Msg._query + Msg._friends + userLogin);
-                            continue;
-                        }
-                        else if(!isAuthorized) continue;
-                        else if (isAuthorized && str.startsWith(Msg._query + Msg._friends)) {
-                            String[] FriendsInfo = str.substring(str.indexOf(",") + 1).split(" ");
-                            chatController.updateFriendList(FriendsInfo);
-                            continue;
-                        }
+                        if (str.startsWith(Msg._query)) {
+                            String[] tokes = str.split(" ");
+                            switch (tokes[1]) {
+                                case Msg._authok:
+                                    isAuthorized = true;
+                                    userLogin = tokes[2];
+                                    chatController.setAuthorized(userLogin);
+                                    break;
+                                case Msg._friends:
+                                    String[] friendsInfo = str.split(" ", 3);
+                                    if(friendsInfo.length > 2) {
+                                        friendsInfo = friendsInfo[2].split(" ");
+                                        chatController.updateFriendList(friendsInfo);
+                                    }
+                                    break;
+                                case Msg._online:
+                                    String[] onLineInfo = str.split(" ", 3);
+                                    if(onLineInfo.length > 2) {
+                                        onLineInfo = onLineInfo[2].split(" ");
+                                        chatController.updateFriendList(onLineInfo);
+                                    }
+                                    break;
 
-                        if (str.startsWith(Msg._msginfo)) {
-                            String[] msgInfo = str.substring(Msg._msginfo.length(), str.indexOf(",")).split(" ");
-                            chatController.receiveMsg(msgInfo[0], msgInfo[1], str.substring(str.indexOf(",") + 1));
+                            }
+                        }
+                        else if (str.startsWith(Msg._msginfo)) {
+                            String[] msgInfo = str.split(" ", 4);
+                            chatController.receiveMsg(msgInfo[1], msgInfo[2], msgInfo[3]);
                         }
                     }
                 } catch (IOException e) {
@@ -125,7 +141,7 @@ public class Main extends Application {
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/client/views/chat_layout.fxml"));
         Parent root = loader.load();
-        primaryStage.setScene(new Scene(root, 550, 500));
+        primaryStage.setScene(new Scene(root, 550, 550));
         primaryStage.setTitle("Чат");
         primaryStage.show();
 

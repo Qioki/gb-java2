@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.ArrayList;
 
 import ClientServer.Msg;
 
@@ -14,8 +14,10 @@ public class ClientHandler {
     private DataInputStream in;
     private DataOutputStream out;
     private ServerMain server;
-    private String login;
+    private String login = "";
+    private String nick = "";
     public boolean isAuthorized = false;
+    private ArrayList<String> myBlacklist = new ArrayList<>();
 
     public ClientHandler(ServerMain server, Socket socket) {
         try {
@@ -24,45 +26,61 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
 
+
             new Thread(() -> {
                 try {
                     while (true) {
                         String str = in.readUTF();
                         System.out.println(str);
 
-                        if (str.startsWith(Msg._query + Msg._auth)) {
-
-                            String[] tokes = str.substring(str.indexOf(",") + 1).split(" ");
-                            String newNick = AuthService.getNickByLoginAndPass(tokes[0], tokes[1]);
-                            if(server.isLoggedIn(tokes[0]))
-                                sendMsg("Пользователь уже подключен");
-                            else if (newNick != null) {
-
-                                sendMsg(Msg._query + Msg._authok + newNick);
-                                login = tokes[0];
-                                isAuthorized = true;
-                                server.subscribe(login, ClientHandler.this);
-
-                            } else {
-                                sendMsg("Неверный логин/пароль");
+                        if (str.startsWith(Msg._query)) {
+                            String[] tokes = str.split(" ");
+                            if(tokes.length < 2) continue;
+                            switch(tokes[1]) {
+                                case Msg._auth:
+                                    if(tokes.length < 4) break;
+                                    if(server.isLoggedIn(tokes[2])) {
+                                        sendMsg("Пользователь уже подключен");
+                                        break;
+                                    }
+                                    String newNick = AuthService.getNickByLoginAndPass(tokes[2], tokes[3]);
+                                    if (newNick != null) {
+                                        sendMsg(Msg._query + Msg._authok + " " + tokes[2] + " " + newNick);
+                                        login = tokes[2];
+                                        nick = newNick;
+                                        isAuthorized = true;
+                                        myBlacklist.clear();
+                                        myBlacklist.addAll(AuthService.getBlacklist(login));
+                                        server.subscribe(ClientHandler.this);
+                                    } else {
+                                        sendMsg("Неверный логин/пароль");
+                                    }
+                                    break;
+                                case Msg._logout:
+                                    isAuthorized = false;
+                                    login = "";
+                                    server.unsubscribe(ClientHandler.this);
+                                    break;
+                                case Msg._friends:
+                                    if(tokes.length < 3) break;
+                                    String strFriendsInfo = AuthService.getFriendsInfo(tokes[2]);
+                                    sendMsg(Msg._query + Msg._friends + " " + strFriendsInfo);
+                                    break;
+                                case Msg._blacklist:
+                                    if(tokes.length < 4) break;
+                                    AuthService.addToBlacklist(tokes[2], tokes[3]);
+                                    myBlacklist.clear();
+                                    myBlacklist.addAll(AuthService.getBlacklist(login));
+                                    break;
+                                default:
+                                    System.out.println("Error query");
                             }
-                            continue;
                         }
-                        if (str.startsWith(Msg._query + Msg._logout)) {
-                            isAuthorized = false;
-                            server.unsubscribe(login);
-                        }
-                        else if(!isAuthorized) continue;
-                        else if (str.startsWith(Msg._query + Msg._friends)) {
-                            String login = str.substring(str.indexOf(",") + 1);
-                            String strFriendsInfo = AuthService.getFriendsInfo(login);
-                            sendMsg(Msg._query + Msg._friends + strFriendsInfo);
-
-                        }
-
-                        if (str.startsWith(Msg._msginfo)) {
-                            String[] msgInfo = str.substring(Msg._msginfo.length(), str.indexOf(",")).split(" ");
-                            server.broadcastMsg(msgInfo[0], msgInfo[1], str.substring(str.indexOf(",") + 1));
+                        else if (str.startsWith(Msg._msginfo)) {
+                            String[] msgInfo = str.split(" ", 4);
+                            if(msgInfo.length > 3)
+                                //server.broadcastMsg(msgInfo[1], msgInfo[2], msgInfo[3]);
+                                server.prepareMsg(msgInfo[1], msgInfo[2], msgInfo[3]);
                         }
                     }
                 } catch (IOException e) {
@@ -83,7 +101,7 @@ public class ClientHandler {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    server.unsubscribe(login);
+                    server.unsubscribe(ClientHandler.this);
                 }
             }).start();
         } catch (IOException e) {
@@ -99,4 +117,19 @@ public class ClientHandler {
             e.printStackTrace();
         }
     }
+
+
+    public String getLogin() {
+        return login;
+    }
+    public String getNick() {
+        return nick;
+    }
+
+    public boolean isInBlacklist(String login) {
+        return myBlacklist.contains(login);
+        //return false;
+    }
+
+
 }

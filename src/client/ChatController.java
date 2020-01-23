@@ -1,5 +1,6 @@
 package client;
 
+import ClientServer.Msg;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -63,6 +64,10 @@ public class ChatController implements Initializable {
 
     public void setAuthorized(String login) {
 
+        if(!userLogin.equals(login)) {
+            localStoreChats.clear();
+            friendNames.clear();
+        }
         userLogin = login;
         isAuthorized = true;
         setupView(true);
@@ -76,9 +81,17 @@ public class ChatController implements Initializable {
     public void receiveMsg(String from, String to, String msg) {
         try {
             UserMessage um = new UserMessage(from, to, msg);
-            localStoreChats.get(userLogin.equals(from) ? to : from).add(um);
-            if(friendNow.equals(from) || friendNow.equals(to))
-                messageToChatWindow(um);
+
+            if(!userLogin.equals(to) && !userLogin.equals(from)) {// значит пришло с общего чата
+                localStoreChats.get(to).add(um);
+                if(friendNow.equals(to))
+                    messageToChatWindow(um);
+            }
+            else {
+                localStoreChats.get(userLogin.equals(to) ? from : to).add(um);
+                if (friendNow.equals(from) || friendNow.equals(to))
+                    messageToChatWindow(um);
+            }
 
         } catch (NullPointerException e) {   }
     }
@@ -98,12 +111,13 @@ public class ChatController implements Initializable {
         Platform.runLater(() -> {
 
             fl_container.getItems().clear();
-            localStoreChats.clear();
-            friendNames.clear();
 
+            addFriend(Msg._broadcast + ":" + Msg._broadcast);
             for (String s : friendList)
                 addFriend(s);
 
+            UserMessage um = new UserMessage(Msg._broadcast, userLogin, "Введите " + Msg._blacklist + " nick\", чтобы добавить\nили удалить из чёрного списка");
+            localStoreChats.get(Msg._broadcast).add(um);
 
             String firstFriend = localStoreChats.firstEntry().getKey();
             selectFriend(firstFriend);
@@ -117,10 +131,11 @@ public class ChatController implements Initializable {
 
         String avatarUrl = "/client/img/avatar0.png";
 
-        String friendLogin = friendInfo.substring(0, friendInfo.indexOf(":"));
-        String friendName = friendInfo.substring(friendInfo.indexOf(":") + 1 );
-        localStoreChats.put(friendLogin, new ArrayList<>());
-        friendNames.put(friendLogin, friendName);
+        String[] info = friendInfo.split(":");
+        if(info[0].equals(userLogin)) return;
+
+        localStoreChats.putIfAbsent(info[0], new ArrayList<>());
+        friendNames.putIfAbsent(info[0], info[1]);
 
         try {
             Parent p = FXMLLoader.load(getClass().getResource("/client/views/friend_layout.fxml"));
@@ -129,12 +144,12 @@ public class ChatController implements Initializable {
             if(iv != null) iv.setImage(new Image(avatarUrl));
 
             Text text = (Text) p.lookup(".friend-name");
-            if(text != null) text.setText(friendName);
+            if(text != null) text.setText(info[1]);
 
 
             fl_container.getItems().add(p);
 
-            p.setOnMousePressed(event -> selectFriend(friendLogin) );
+            p.setOnMousePressed( event -> selectFriend(info[0]) );
 
         } catch (IOException e) {
             e.printStackTrace();
